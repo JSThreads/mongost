@@ -1,4 +1,5 @@
-# mongo-api
+# Temp 
+
 MongoDB API builded with nodejs
 
 Mongo setup admin all db user (API)
@@ -27,3 +28,23 @@ async function run() {
         }
 }
 ```
+
+# Mongo API 
+
+## Usage
+
+To use Mongo API, use the official container or install NodeJs and run Mongo DB with the `initial.sh` script.
+
+## Structure
+
+The Mongo API use one table named `povajs-api` where is the Mongo all databases administrator that is used by the API. Inside this database are two tables: `users` and `databases`. One store all the users with their permissions for databases and other one store the databases create by Mongo API because those are only accessible from Mongo API for security.
+
+## API
+
+### Users
+
+⚠ To use with the Mongo API default main admin user, it cannot be deleted, or updated from the API for security.
+
+| Entrypoint | Headers data | Description |
+| - | - | - |
+| /users/add | X-name: name, X-password: hashed password, X-permissions: json object with permissions | add a user to the database |
