@@ -47,4 +47,24 @@ The Mongo API use one table named `povajs-api` where is the Mongo all databases 
 
 | Entrypoint | Headers data | Description |
 | - | - | - |
-| /users/add | X-name: name, X-password: hashed password, X-permissions: json object with permissions | add a user to the database |
+| ***/users/add*** | **X-name**: name, **X-password**: hashed password, **X-permissions**: json object with permissions | add a user to the database |
+| ***/users/remove*** | **X-name**: name | remove a user from the database |
+| ***/users/update*** | (**X-name**: name), (**X-password**: hashed password), (**X-permissions**: json object with permissions) | update a user in the database |
+
+### Databases
+
+| Entrypoint | Headers data | Description |
+| - | - | - |
+| ***/databases/add*** | **X-name**: name |  |
+| ***/databases/create*** |  |  |
+| ***/databases/update*** |  |  |
+| ***/databases/drop*** |  |  |
+| ***/databases/copy*** |  |  |
+| ***/databases/&lt;database>/add*** |  |  |
+| ***/databases/&lt;database>/create*** |  |  |
+| ***/databases/&lt;database>/update*** |  |  |
+| ***/databases/&lt;database>/drop*** |  |  |
+| ***/databases/&lt;database>/&lt;collection>/create*** |  |  |
+| ***/databases/&lt;database>/&lt;collection>/update*** |  |  |
+| ***/databases/&lt;database>/&lt;collection>/delete*** |  |  |
+| ***/databases/&lt;database>/&lt;collection>/get*** |  |  |
