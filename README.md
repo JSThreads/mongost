@@ -1,34 +1,3 @@
-# Temp 
-
-MongoDB API builded with nodejs
-
-Mongo setup admin all db user (API)
-
-in mongosh
-
-```
-use api
-db.addUser({ user: "apiAdmin", pwd: "mongoapipassworduptoyou", roles: [{ "role" : "dbAdminAnyDatabase", "db" : "api" }] })
-```
-
-node js dep: express, dotenv, mongodb
-```js
-const { MongoClient } = require('mongodb')
-const client = new MongoClient('mongodb://apiAdmin:mongoapipassworduptoyou@localhost:27017/api')
-
-async function run() {
-        try {
-                await client.connect();
-                await client.db('api').collection('test').insertOne({ content: 'test' })
-                var content = await client.db('api').collection('test').find().toArray(function (err, res) {
-                        console.log(res);
-                });
-        } finally {
-                await client.close();
-        }
-}
-```
-
 # Mongo API 
 
 ## Usage
@@ -37,7 +6,7 @@ To use Mongo API, use the official container or install NodeJs and run Mongo DB 
 
 ## Structure
 
-The Mongo API use one table named `povajs-api` where is the Mongo all databases administrator that is used by the API. Inside this database are two tables: `users` and `databases`. One store all the users with their permissions for databases and other one store the databases create by Mongo API because those are only accessible from Mongo API for security.
+The Mongo API use one table named `povajs-api` where is the Mongo all databases administrator that is used by the API. Inside this database are two tables: `users` and `databases`. One store all the users with their permissions for databases and other one store the databases created or added by Mongo API because those are only accessible for security.
 
 ## API
 
@@ -49,22 +18,24 @@ The Mongo API use one table named `povajs-api` where is the Mongo all databases 
 | - | - | - |
 | ***/users/add*** | **X-name**: name, **X-password**: hashed password, **X-permissions**: json object with permissions | add a user to the database |
 | ***/users/remove*** | **X-name**: name | remove a user from the database |
-| ***/users/update*** | (**X-name**: name), (**X-password**: hashed password), (**X-permissions**: json object with permissions) | update a user in the database |
+| ***/users/update*** | **X-name**: name, (**X-password**: hashed password), (**X-permissions**: json object with permissions) | update a user in the database |
 
 ### Databases
 
 | Entrypoint | Headers data | Description |
 | - | - | - |
-| ***/databases/add*** | **X-name**: name |  |
-| ***/databases/create*** |  |  |
-| ***/databases/update*** |  |  |
-| ***/databases/drop*** |  |  |
-| ***/databases/copy*** |  |  |
-| ***/databases/&lt;database>/add*** |  |  |
-| ***/databases/&lt;database>/create*** |  |  |
-| ***/databases/&lt;database>/update*** |  |  |
-| ***/databases/&lt;database>/drop*** |  |  |
-| ***/databases/&lt;database>/&lt;collection>/create*** |  |  |
-| ***/databases/&lt;database>/&lt;collection>/update*** |  |  |
-| ***/databases/&lt;database>/&lt;collection>/delete*** |  |  |
-| ***/databases/&lt;database>/&lt;collection>/get*** |  |  |
+| ***/databases/add*** | **X-name**: name | add a database to API use |
+| ***/databases/create*** | **X-name**: name | add a new database to API use |
+| ***/databases/rename*** | **X-name**: name, **X-newname**: new name | rename the database |
+| ***/databases/remove*** | **X-name**: name | remove the database from API use |
+| ***/databases/drop*** | **X-name**: name | delete the database |
+| ***/databases/copy*** | **X-name**: name, **X-copyname**: new name | create a database copy |
+| ***/databases/&lt;database>/add*** | **X-name**: name | add a collection to API use |
+| ***/databases/&lt;database>/create*** | **X-name**: name | add a new collection to API use |
+| ***/databases/&lt;database>/rename*** | **X-name**: name, **X-newname**: new name | rename the collection |
+| ***/databases/&lt;database>/remove*** | **X-name**: name | remove the collection from API use |
+| ***/databases/&lt;database>/drop*** | **X-name**: name | delete the collection |
+| ***/databases/&lt;database>/&lt;collection>/create*** | **X-name**: name, **X-value**: value | create a new value |
+| ***/databases/&lt;database>/&lt;collection>/update*** | **X-name**: name, **X-value**: value | update a value |
+| ***/databases/&lt;database>/&lt;collection>/delete*** | **X-name**: name | delete the value |
+| ***/databases/&lt;database>/&lt;collection>/get*** | **X-name**: name, **X-request**: request | return the value |
