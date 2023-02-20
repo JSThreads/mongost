@@ -33,7 +33,19 @@ app.post('/user', async (req, res) => {
                         // else throw auth error
 
                         try {
-                                client.db('api').collection('users').find({ name: usr, pwd: pwd })
+                                let current = await client.db('api').collection('users').find({ name: usr, pwd: pwd }).toArray()
+                                if (current.length > 0)
+                                        res.send('Error@user: auth failed')
+                                else {
+                                        // check if the new user already exists
+                                        let check = await client.db('api').collection('users').find({ name: req.headers['x-name'] }).toArray()
+                                        if (check.length > 0)
+                                                res.send('Error@user: user already exists')
+                                        else {
+                                                client.db('api').collection('users').insertOne({ name: req.headers['x-name'], pwd: req.headers['x-pwd'], perm: req.headers['x-perm'] })
+                                                res.send('Success@user: user successfully added')
+                                        }
+                                }
                         } catch {
                                 res.send('Error@user: mongo internal error with user collection\n')
                         }
