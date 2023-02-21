@@ -12,6 +12,18 @@ The Mongo API use one table named `povajs-api` where is the Mongo all databases 
 
 In each of your API request you need to add a `x-token` header with the token build like `user.name`.`user.pwd`.
 
+### Permissions
+
+`:<r:read|w:write|x:modify|a:admin>` - `:` is the default option that will be applied by default, modify enables you to modify the structure of your databases and admin has all the modify rights and can manage users.
+
+`<database>(:<collection>):<r:read|w:write|x:modify>` - here you can apply rules for a database or collection and tell what can do a user.
+
+⚠ If the user has any default rule and any specific rule about a collection / database he hasn't access at all by default
+
+⚠ Admin option is only disponible by default and it's the mode that enables you to manage users
+
+⚠ If a user has many permissions use `;` to separate them
+
 ### Users
 
 ⚠ To use with the Mongo API default main admin user, it cannot be deleted, or updated from the API for security.
