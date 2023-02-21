@@ -10,32 +10,34 @@ The Mongo API use one table named `povajs-api` where is the Mongo all databases 
 
 ## API
 
+In each of your API request you need to add a `x-token` header with the token build like `user.name`.`user.pwd`.
+
 ### Users
 
 ⚠ To use with the Mongo API default main admin user, it cannot be deleted, or updated from the API for security.
 
 | Entrypoint | Headers data | Description |
 | - | - | - |
-| ***/users/add*** | **X-name**: name, **X-password**: hashed password, **X-permissions**: json object with permissions | add a user to the database |
-| ***/users/remove*** | **X-name**: name | remove a user from the database |
-| ***/users/update*** | **X-name**: name, (**X-password**: hashed password), (**X-permissions**: json object with permissions) | update a user in the database |
+| ***POST /users*** | **X-name**: name, **X-pwd**: hashed password, **X-perm**: json object with permissions | add a user to the database |
+| ***DELETE /users*** | **X-name**: name | remove a user from the database |
+| ***PATCH /users*** | **X-name**: name, (**X-pwd**: hashed password), (**X-perm**: json object with permissions) | update a user in the database |
 
 ### Databases
 
 | Entrypoint | Headers data | Description |
 | - | - | - |
-| ***/databases/add*** | **X-name**: name | add a database to API use |
-| ***/databases/create*** | **X-name**: name | add a new database to API use |
-| ***/databases/rename*** | **X-name**: name, **X-newname**: new name | rename the database |
-| ***/databases/remove*** | **X-name**: name | remove the database from API use |
-| ***/databases/drop*** | **X-name**: name | delete the database |
-| ***/databases/copy*** | **X-name**: name, **X-copyname**: new name | create a database copy |
-| ***/databases/&lt;database>/add*** | **X-name**: name | add a collection to API use |
-| ***/databases/&lt;database>/create*** | **X-name**: name | add a new collection to API use |
-| ***/databases/&lt;database>/rename*** | **X-name**: name, **X-newname**: new name | rename the collection |
-| ***/databases/&lt;database>/remove*** | **X-name**: name | remove the collection from API use |
-| ***/databases/&lt;database>/drop*** | **X-name**: name | delete the collection |
-| ***/databases/&lt;database>/&lt;collection>/create*** | **X-name**: name, **X-value**: value | create a new value |
-| ***/databases/&lt;database>/&lt;collection>/update*** | **X-name**: name, **X-value**: value | update a value |
-| ***/databases/&lt;database>/&lt;collection>/delete*** | **X-name**: name | delete the value |
-| ***/databases/&lt;database>/&lt;collection>/get*** | **X-name**: name, **X-request**: request | return the value |
+| ***POST /databases/add*** | **X-name**: name | add a database to API use |
+| ***POST /databases/remove*** | **X-name**: name | remove the database from API use |
+| ***POST /databases/copy*** | **X-name**: name, **X-copyname**: new name | create a database copy |
+| ***POST /databases*** | **X-name**: name | add a new database to API use |
+| ***PATCH /databases*** | **X-name**: name, **X-newname**: new name | rename the database |
+| ***DELETE /databases*** | **X-name**: name | delete the database |
+| ***POST /databases/&lt;database>/add*** | **X-name**: name | add a collection to API use |
+| ***POST /databases/&lt;database>/remove*** | **X-name**: name | remove the collection from API use |
+| ***POST /databases/&lt;database>*** | **X-name**: name | add a new collection to API use |
+| ***PATCH /databases/&lt;database>*** | **X-name**: name, **X-newname**: new name | rename the collection |
+| ***DELETE /databases/&lt;database>*** | **X-name**: name | delete the collection |
+| ***POST /databases/&lt;database>/&lt;collection>*** | **X-name**: name, **X-value**: value | create a new value |
+| ***PATCH /databases/&lt;database>/&lt;collection>*** | **X-name**: name, **X-value**: value | update a value |
+| ***DELETE /databases/&lt;database>/&lt;collection>*** | **X-name**: name | delete the value |
+| ***GET /databases/&lt;database>/&lt;collection>*** | **X-name**: name, **X-request**: request | return the value |
