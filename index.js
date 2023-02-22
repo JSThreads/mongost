@@ -10,15 +10,7 @@ const client = new MongoClient('mongodb://apiAdmin:admin@localhost:27017/api');
 const app = require('express')()
 const port = process.env.PORT
 
-//              USERS
-//token: <name>:<sha256_password>
-/* permissions: {
-    default: '<r:read|w:write|x:modify|a:admin>',
-    specific_db: {
-        permissions: '<r:read|w:write|x:modify>',       <- this one is over the default one for the hole database
-        specific_col: '<r:read|w:write|x:modify>'
-    }
-}*/
+//              USERS           //
 
 app.post('/user', async (req, res) => {
         if (req.headers['x-name'] == null || req.headers['x-pwd'] == null || req.headers['x-perm'] == null || req.headers['x-token'] == null)
@@ -33,8 +25,9 @@ app.post('/user', async (req, res) => {
                         // else throw auth error
 
                         try {
-                                let current = await client.db('api').collection('users').find({ name: usr, pwd: pwd, perm: ':a' }).toArray()
-                                if (current.length < 1)
+                                let current = await client.db('api').collection('users').find({ name: usr, pwd: pwd }).toArray()
+                                let current_perm = current[0].perm.split(';')
+                                if (current.length < 1 || current_perm.find(e => e == ':a') != ':a')
                                         res.send('Error@user: auth failed\n')
                                 else {
                                         // check if the new user already exists
@@ -61,8 +54,9 @@ app.delete('/user', async (req, res) => {
                         res.send('Error@user: wrong token syntax\n')
                 else {
                         try {
-                                let current = await client.db('api').collection('users').find({ name: usr, pwd: pwd, perm: ':a' }).toArray()
-                                if (current.length < 1)
+                                let current = await client.db('api').collection('users').find({ name: usr, pwd: pwd }).toArray()
+                                let current_perm = current[0].perm.split(';')
+                                if (current.length < 1 || current_perm.find(e => e == ':a') != ':a')
                                         res.send('Error@user: auth failed\n')
                                 else {
                                         if (req.headers['x-name'] != 'apiAdmin') {
@@ -92,8 +86,9 @@ app.patch('/user', async (req, res) => {
                         res.send('Error@user: wrong token syntax\n')
                 else {
                         try {
-                                let current = await client.db('api').collection('users').find({ name: usr, pwd: pwd, perm: ':a' }).toArray()
-                                if (current.length < 1)
+                                let current = await client.db('api').collection('users').find({ name: usr, pwd: pwd }).toArray()
+                                let current_perm = current[0].perm.split(';')
+                                if (current.length < 1 || current_perm.find(e => e == ':a') != ':a')
                                         res.send('Error@user: auth failed\n')
                                 else {
                                         let new_name_exists = req.headers['x-newname'] != null ? await client.db('api').collection('users').find({ name: req.headers['x-newname'] }).toArray().length > 0 : false
@@ -123,6 +118,11 @@ app.patch('/user', async (req, res) => {
                         }
                 }
         }
+})
+
+app.get('/', (req, res) => {
+        client.db('l').collection('test').insertOne({ test: 'test' })
+        res.send('OK\n')
 })
 
 app.listen(port, () => {
