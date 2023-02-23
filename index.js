@@ -1,97 +1,175 @@
 // setup all configs
 require('dotenv').config();
 
+const { exec } = require("child_process");
 const { MongoClient } = require('mongodb');
-
-const rsaEngine = require('encrypt-rsa').default;
-const ersa = new rsaEngine();
 
 const app = require('express')();
 
 const port = process.env.PORT;
 let   entrypoint = process.env.ENTRYPOINT;
 const host = process.env.HOST;
-const enrsa = process.env.ENRSA;
-const dersa = process.env.DERSA;
 
 if (entrypoint[entrypoint.length - 1] == '/')
-        entrypoint = entrypoint.substring(0, entrypoint.length - 1);
+    entrypoint = entrypoint.substring(0, entrypoint.length - 1);
 
-app.post(`${entrypoint}/exec/:database`, async (req, res) => {
-        try {
-                if (req.headers['x-token'] == null)
-                        res.send('Error: Missing headers');
-                else {
-                        const token = ersa.decryptStringWithRsaPrivateKey({ text: req.headers['x-token'], dersa });
-                        const [usr, pwd] = token.split('.');
+// list db
+// list col
 
-                        // url adds on
-                        let db = req.headers['x-database'] || '';
-                        let options = req.headers['x-options'] || '';
+/*
+(async () => {
+    const client = new MongoClient(`mongodb://apiAdmin:admin@${host}/`);
+    await client.connect();
 
-                        if (options != '')
-                                options = `?${options}`;
+    console.log(JSON.stringify(await client.db('test').collection('orders').aggregate([
+        { $lookup:
+           {
+             from: 'products',
+             localField: 'product_id',
+             foreignField: '_id',
+             as: 'orderdetails'
+           }
+         }
+        ]).toArray()));
+})()
+*/
 
-                        const client = new MongoClient(`mongodb://${usr}:${pwd}@${host}/${db}${options}`);
-                        await client.connect();
+app.post(`${entrypoint}/exec`, async (req, res) => {
+    try {
+        if (req.headers['x-token'] == null)
+                res.send('Error: Missing headers');
+        else {
+            const token = req.headers['x-token'];
+            const [usr, pwd] = token.split('.');
 
-                        // run command
-                        let cmd = req.headers['x-command'];
-                        const result = await client.db(req.params.database).command(JSON.parse(cmd));
+            // url adds on
+            let db = req.headers['x-database'] || '';
+            let options = req.headers['x-options'] || '';
 
-                        await client.close();
+            if (options != '')
+                options = `?${options}`;
 
-                        res.send(JSON.stringify(result));
-                }
-        } catch {
-                await client.close();
+            const client = new MongoClient(`mongodb://${usr}:${pwd}@${host}/${db}${options}`);
+            await client.connect();
 
-                res.send('Error: Something went wrong..');
+            // run the command
+
+            if (req.headers['x-command'] == null) 
+                res.send('Error: Missing command')
+            else 
+                exec(`mongosh --eval "printjson(${req.headers['x-command']})"`, (error, stdout, stderr) => {
+                    if (error) 
+                        res.send(`Error: Mongosh says, ${error}`)
+                    else if (stderr) 
+                        res.send(`Error: Mongosh says, ${stderr}`)
+                    else
+                        res.send(stdout.split('\n').splice(24).join('\n'))
+                });
         }
-});
+    } catch(e) {
+        console.log(e)
+        res.send('Error: Something went wrong..');
+    }
+})
 
 app.get(`${entrypoint}/api/:database/:collection`, async (req, res) => {
-        try {
-                if (req.headers['x-token'] == null)
-                        res.send('Error: Missing headers');
-                else if (req.params.database == null || req.params.collection == null)
-                        res.send('Error: Wrong query')
-                else {
-                        const token = ersa.decryptStringWithRsaPrivateKey({ text: req.headers['x-token'], dersa });
-                        const [usr, pwd] = token.split('.');
+    try {
+        if (req.headers['x-token'] == null)
+                res.send('Error: Missing headers');
+        else {
+            const token = req.headers['x-token'];
+            const [usr, pwd] = token.split('.');
 
-                        // url adds on
-                        let db = req.headers['x-database'] || '';
-                        let options = req.headers['x-options'] || '';
+            // url adds on
+            let db = req.headers['x-database'] || '';
+            let options = req.headers['x-options'] || '';
 
-                        if (options != '')
-                                options = `?${options}`;
+            if (options != '')
+                options = `?${options}`;
 
-                        const client = new MongoClient(`mongodb://${usr}:${pwd}@${host}/${db}${options}`);
-                        await client.connect();
+            const client = new MongoClient(`mongodb://${usr}:${pwd}@${host}/${db}${options}`);
+            await client.connect();
 
-                        // run the query
-                        let query = req.headers['x-query'] || {};
-                        let query_options = req.headers['x-query-options'] || {};
-                        let query_type = req.headers['x-query-type'] || 'mongoDB';     // mongoDB | graphQL
-                        let query_method = req.headers['x-query-method'] || 'find';    // find | aggregate | subscribe | distinct | search => for mongoDB only
+            // run the query
+            let query = JSON.parse(req.headers['x-query']) || {};
+            let query_options = JSON.parse(req.headers['x-query-options']) || {};
+            let sort = JSON.parse(req.headers['x-query-sort']) || {};
+            let limit = JSON.parse(req.headers['x-query-limit']) || {};
 
-                        switch (query_type) {
-                                case 'mongoDB':
-                                        switch (query_method) {
-                                                case 'find':
-                                                break;
-                                                default:
-                                                        res.send('Error: Wrong query method');
-                                        }
-                                break;
-                                default:
-                                        res.send('Error: Wrong query type');
-                        }
-                }
-        } catch {
-                await client.close();
-
-                res.send('Error: Something went wrong..');
+            res.send(JSON.stringify(client.db(req.params.database).collection(req.params.collection).find(query, query_options).sort(sort).limit(limit).toArray()));
         }
+    } catch {
+        res.send('Error: Something went wrong..');
+    }
+})
+
+app.post(`${entrypoint}/api/:database/:collection`, async (req, res) => {
+    try {
+        if (req.headers['x-token'] == null)
+                res.send('Error: Missing headers');
+        else {
+            const token = req.headers['x-token'];
+            const [usr, pwd] = token.split('.');
+
+            // url adds on
+            let db = req.headers['x-database'] || '';
+            let options = req.headers['x-options'] || '';
+
+            if (options != '')
+                options = `?${options}`;
+
+            const client = new MongoClient(`mongodb://${usr}:${pwd}@${host}/${db}${options}`);
+            await client.connect();
+
+            // insert data
+            let data = JSON.parse(req.headers['x-data']) || {};
+
+            if (data.length != null)
+                client.db(req.params.database).collection(req.params.collection).insertMany(data)
+            else 
+                client.db(req.params.database).collection(req.params.collection).insertOne(data)
+
+            res.send('Successfully added the data!');
+        }
+    } catch {
+        res.send('Error: Something went wrong..');
+    }
+})
+
+app.delete(`${entrypoint}/api/:database/:collection`, async (req, res) => {
+    try {
+        if (req.headers['x-token'] == null)
+                res.send('Error: Missing headers');
+        else {
+            const token = req.headers['x-token'];
+            const [usr, pwd] = token.split('.');
+
+            // url adds on
+            let db = req.headers['x-database'] || '';
+            let options = req.headers['x-options'] || '';
+
+            if (options != '')
+                options = `?${options}`;
+
+            const client = new MongoClient(`mongodb://${usr}:${pwd}@${host}/${db}${options}`);
+            await client.connect();
+
+            // delete data
+            let query = JSON.parse(req.headers['x-query']) || {}
+            let type = JSON.parse(req.headers['x-query-type']) || 'single'
+
+            if (type == 'single')
+                client.db(req.params.database).collection(req.params.collection).deleteOne(query)
+            else
+                client.db(req.params.database).collection(req.params.collection).deleteMany(query)
+
+            res.send('Successfully deleted the data!');
+        }
+    } catch {
+        res.send('Error: Something went wrong..');
+    }
+})
+
+app.listen(port, () => {
+    console.log(`🥭 Mongo API listening on port ${port}`);
 })
