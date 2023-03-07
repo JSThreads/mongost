@@ -1,0 +1,26 @@
+<div id="dbManage">
+    <div class="default">
+        <h2>Hello, welcome to Mongost</h2>
+        <p>You are in the <i>"Databases"</i> section, that is made to manage your Mongo databases with a web GUI.</p>
+
+        <p>😒 Any Database has been selected..</p>
+        <p>👌 In case of questions checkout our <a href="#" target="_blank" rel="noopener noreferrer">documentation</a> or <a href="#" target="_blank" rel="noopener noreferrer">Github</a></p>
+    </div>
+    <div class="content">Smth ig</div>
+</div>
+<style>
+    .default {
+        display: flex;
+        flex-direction: column;
+    }
+</style>
+<script>
+    if (window.location.href.split('#').length > 1) {
+        document.querySelector('#dbManage > .default').style.display = 'none';
+        document.querySelector('#dbManage > .content').style.display = 'flex';
+    }
+    else {
+        document.querySelector('#dbManage > .default').style.display = 'flex';
+        document.querySelector('#dbManage > .content').style.display = 'none';
+    }
+</script>

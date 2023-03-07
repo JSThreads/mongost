@@ -1,0 +1,23 @@
+---
+const { database } = Astro.props
+---
+
+<details>
+    <summary onclick="((event) => {
+        let p = event.target;
+        if (p.tagName)
+            while (p.tagName != 'P')
+                p = p.children[0]
+        window.location.href = window.location.href.split('#')[0] + '#' + p.innerHTML
+
+        if (window.location.href.split('#').length > 1) {
+            document.querySelector('#dbManage > .default').style.display = 'none';
+            document.querySelector('#dbManage > .content').style.display = 'flex';
+        }
+        else {
+            document.querySelector('#dbManage > .default').style.display = 'flex';
+            document.querySelector('#dbManage > .content').style.display = 'none';
+        }
+    })(event)"><span class="material-symbols-outlined">database</span><p>{database}</p></summary>
+    <slot />
+</details>

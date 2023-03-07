@@ -1,0 +1,64 @@
+---
+import '../styles/dashboard.css';
+import NavDb from '../components/navDb.astro';
+import NavCol from '../components/navCol.astro';
+import DbManage from '../components/dbManage.astro';
+
+const dbs = [{ name: 'adminDB', collections: ['test', 'productionproductionproduction'] }]
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Dashboard</title>
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+	</head>
+	<body>
+		<nav id="main">
+			<div>
+				<h1>Mongost</h1>
+				<div class="menu">
+					<div><a>Databases</a><a>Commands center</a><a>Settings</a></div>
+					<span class="material-symbols-outlined" onclick="var e = document.querySelector('.menu').querySelector('div'); e.classList.contains('active') ? e.classList.remove('active') : e.classList.add('active')">menu</span>
+				</div>
+			</div>
+		</nav>
+		<main>
+			<nav>
+				<span class="material-symbols-outlined" onclick="((event) => {
+					let e = event.target.parentElement; 
+					e.classList.contains('active') ? e.classList.remove('active') : e.classList.add('active')
+				})(event)">close</span>
+				
+				{dbs.map((db) => (
+					<NavDb database={db.name}>
+						{db.collections.map((collection) => (
+							<NavCol collection={collection} />
+						))}
+					</NavDb>
+				))}
+			</nav>
+			<div>
+				<span onclick="((event) => {
+					let e = document.querySelector('body > main > nav'); 
+					e.classList.contains('active') ? e.classList.remove('active') : e.classList.add('active')
+				})(event)"><span class="material-symbols-outlined">menu</span>Databases</span>
+				<DbManage />
+			</div>
+		</main>
+		<script>
+			document.querySelector('main').onclick = (e) => {
+				document.querySelector('.menu').querySelector('div').classList.remove('active')
+			}
+			window.onresize = (e) => {
+				// hiding menu
+				if (window.innerWidth > 700) 
+					document.querySelector('.menu').querySelector('div').classList.remove('active')
+			}
+		</script>
+	</body>
+</html>

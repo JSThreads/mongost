@@ -1,0 +1,20 @@
+---
+const { collection } = Astro.props
+---
+
+<span onclick="((event) => {
+    event.preventDefault()
+    let p = event.target;
+    while (p.tagName != 'P')
+        p = p.children[0]
+    window.location.href = window.location.origin + window.location.pathname + window.location.hash.split(':')[0] + ':' + p.innerHTML
+
+    if (window.location.href.split('#').length > 1) {
+        document.querySelector('#dbManage > .default').style.display = 'none';
+        document.querySelector('#dbManage > .content').style.display = 'flex';
+    }
+    else {
+        document.querySelector('#dbManage > .default').style.display = 'flex';
+        document.querySelector('#dbManage > .content').style.display = 'none';
+    }
+})(event)"><span class="material-symbols-outlined">folder</span><p>{collection}</p></span>
