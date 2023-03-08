@@ -1,10 +1,6 @@
 ---
 import '../styles/dashboard.css';
-import NavDb from '../components/navDb.astro';
-import NavCol from '../components/navCol.astro';
 import DbManage from '../components/dbManage.astro';
-
-const dbs = [{ name: 'adminDB', collections: ['test', 'productionproductionproduction'] }]
 ---
 
 <html lang="en">
@@ -16,6 +12,18 @@ const dbs = [{ name: 'adminDB', collections: ['test', 'productionproductionprodu
 		<title>Dashboard</title>
 
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+
+		<script src="../../public/frontend/navCol.js"></script>
+		<script src="../../public/frontend/navDb.js"></script>
+		<script src="../../public/frontend/navGen.js"></script>
+		<script src="../../public/frontend/manageDb.js"></script>
+		<script src="../../public/frontend/cardDb.js"></script>
+
+		<script>
+			// fetch and add dbs to window object
+
+			window.dbs = [{ name: 'adminDB', collections: ['test', 'productionproductionproduction'] }, { name: 'adminDB', collections: ['test', 'productionproductionproduction'] }, { name: 'adminDB', collections: ['test', 'productionproductionproduction'] }, { name: 'adminDB', collections: ['test', 'productionproductionproduction'] }, { name: 'adminDB', collections: ['test', 'productionproductionproduction'] }, { name: 'adminDB', collections: ['test', 'productionproductionproduction'] }, { name: 'adminDB', collections: ['test', 'productionproductionproduction'] }, { name: 'adminDB', collections: ['test', 'productionproductionproduction'] }];
+		</script>
 	</head>
 	<body>
 		<nav id="main">
@@ -29,18 +37,18 @@ const dbs = [{ name: 'adminDB', collections: ['test', 'productionproductionprodu
 		</nav>
 		<main>
 			<nav>
-				<span class="material-symbols-outlined" onclick="((event) => {
-					let e = event.target.parentElement; 
-					e.classList.contains('active') ? e.classList.remove('active') : e.classList.add('active')
-				})(event)">close</span>
-				
-				{dbs.map((db) => (
-					<NavDb database={db.name}>
-						{db.collections.map((collection) => (
-							<NavCol collection={collection} />
-						))}
-					</NavDb>
-				))}
+				<div>
+					<span class="material-symbols-outlined" onclick="((event) => {
+						let e = event.target.parentElement.parentElement; 
+						e.classList.contains('active') ? e.classList.remove('active') : e.classList.add('active')
+					})(event)">close</span>
+					
+					<f-navgen />
+
+					<div>
+						<span class="material-symbols-outlined">add</span><p>New database</p>
+					</div>
+				</div>
 			</nav>
 			<div>
 				<span onclick="((event) => {

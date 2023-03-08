@@ -1,26 +1,70 @@
-<div id="dbManage">
-    <div class="default">
-        <h2>Hello, welcome to Mongost</h2>
-        <p>You are in the <i>"Databases"</i> section, that is made to manage your Mongo databases with a web GUI.</p>
+<div id="dbManage" style="">
+    <div class="default_db">
+        <p style="margin-right: 20px;">You haven't selected any database.. Choose between one of those:</p>
 
-        <p>😒 Any Database has been selected..</p>
-        <p>👌 In case of questions checkout our <a href="#" target="_blank" rel="noopener noreferrer">documentation</a> or <a href="#" target="_blank" rel="noopener noreferrer">Github</a></p>
+        <div>
+            <f-managedb></f-managedb>
+        </div>
     </div>
-    <div class="content">Smth ig</div>
+    <div class="default_col">
+
+    </div>
+    <div class="content">
+
+    </div>
 </div>
 <style>
-    .default {
+    #dbManage {
+        position: absolute;
+        width: calc(100% - 320px);
+        height: calc(100% - 20px);
+
+        overflow-y: auto;
+    }
+    #dbManage::-webkit-scrollbar {
+        width: 10px;
+    }
+    #dbManage:hover::-webkit-scrollbar-track {
+        background-color: #e4e4e4;
+    }
+
+    .default_db {
+        position: relative;
         display: flex;
         flex-direction: column;
+        gap: 30px;
+        height: 100%;
+        width: 100%;
+    }
+
+    f-managedb {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 300px);
+        justify-content: space-between;
+        grid-gap: 20px;
+    }
+    
+    @media screen and (max-width: 1200px) {
+        #dbManage {
+            width: calc(100% - 20px);
+            height: calc(100% - 70px);
+        }
     }
 </style>
 <script>
-    if (window.location.href.split('#').length > 1) {
-        document.querySelector('#dbManage > .default').style.display = 'none';
+    if (window.location.hash.split(':').length > 1) {
+        document.querySelector('#dbManage > .default_db').style.display = 'none';
+        document.querySelector('#dbManage > .default_col').style.display = 'none';
         document.querySelector('#dbManage > .content').style.display = 'flex';
     }
+    else if (window.location.hash != '') {
+        document.querySelector('#dbManage > .default_db').style.display = 'none';
+        document.querySelector('#dbManage > .default_col').style.display = 'flex';
+        document.querySelector('#dbManage > .content').style.display = 'none';
+    }
     else {
-        document.querySelector('#dbManage > .default').style.display = 'flex';
+        document.querySelector('#dbManage > .default_db').style.display = 'flex';
+        document.querySelector('#dbManage > .default_col').style.display = 'none';
         document.querySelector('#dbManage > .content').style.display = 'none';
     }
 </script>
