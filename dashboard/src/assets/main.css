@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Golos+Text&display=swap');
+
+:root {
+    --color: #72e780;
+    --dark:  #0d1221;
+    --light: #fcfcfc;
+}
+
+* {
+    font-family: 'Golos Text', sans-serif;
+    margin: 0px;
+    padding: 0px;
+    text-decoration: none;
+    color: var(--dark);
+    box-sizing: border-box;
+}
+
+.material-symbols-outlined {
+    user-select: none;
+    cursor: pointer;
+}
