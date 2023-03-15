@@ -11,7 +11,7 @@ const darkmode = darkmodeStore();
     div {
         display: grid;
         grid-template-rows: 100px 1fr;
-        min-width: 100vw;
+        min-width: 100%;
         min-height: 100vh;
     }
 </style>
